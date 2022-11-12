@@ -75,7 +75,7 @@ def WriteFiles():
             out_file.close()
     print("\nExtraction complete!")
 
-#ExtractFS()
-#ExtractFD()
-#WriteFiles()
-print(hex(FNV1a64("pm0081_00_00_20146_stepout01.traef")))
+ExtractFS()
+ExtractFD()
+WriteFiles()
+#print(hex(FNV1a64("pm0081_00_00_20146_stepout01.traef")))
