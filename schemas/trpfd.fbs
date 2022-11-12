@@ -1,0 +1,24 @@
+file_extension "trpfd";
+
+table UnkTable2 {
+	unk1: uint64;
+	unk2: uint64;
+}
+
+table EmptyTable {
+
+}
+
+table UnkTable1 {
+	unk1: uint64;
+	unk2: EmptyTable;
+}
+
+table TRPFD {
+	unk1: [uint64]; 	// 0x042DC6 elements, starts at 0x8DC6AC
+	paths: [string];	// 0x003EF0 elements, starts at 0x7BC2F8
+	unk3: [UnkTable1];	// 0x042DC6 elements, starts at 0x06E274
+	unk4: [UnkTable2];	// 0x003EF0 elements, starts at 0x000028
+}
+
+root_type TRPFD;

@@ -1,0 +1,21 @@
+file_extension "trpak";
+
+enum Compression : uint8 {
+	OODLE = 3,
+	NONE = 255,
+}
+
+table File {
+	unused: uint8;
+	compression_type: Compression = 255;
+	unk1: uint8;
+	decompressed_size: uint32;
+	data: [uint8];
+}
+
+table TRPAK {
+	hashes: [uint64];
+	files: [File];
+}
+
+root_type TRPAK;
