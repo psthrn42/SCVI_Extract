@@ -13,3 +13,7 @@ Python scripts to extract data formats from the pokemon games 'Scarlet' and 'Vio
 ### TRPAK Extraction
 1. Run the script 'trpak_extract.py' with the full path of the trpak you want to extract as an argument.
 2. The extracted files will be located alongside the input file.
+
+### Full Extraction (Note: this might take a while)
+1. Run the script 'full_extract.py' with no arguments
+2. The extracted files will be located in a folder called 'output' in the root directory.
