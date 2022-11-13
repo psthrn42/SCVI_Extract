@@ -3,6 +3,7 @@ from pathlib import Path
 import subprocess
 import sys
 import json
+import glob
 from ctypes import cdll, c_char_p, create_string_buffer
 
 schema_dir = "schemas"
@@ -10,10 +11,11 @@ info_dir = "info"
 tool_dir = "tools"
 
 def OodleDecompress(raw_bytes, size, output_size):
-    handle = cdll.LoadLibrary(tool_dir + "\\oo2core_6_win64.dll")
-    output = create_string_buffer(output_size)
-    output_bytes = handle.OodleLZ_Decompress(c_char_p(raw_bytes), size, output, output_size, 0, 0, 0, None, None, None, None, None, None, 3)
-    return output.raw
+    for filename in glob.glob(os.path.join(tool_dir, "oo2core*.dll")):
+        handle = cdll.LoadLibrary(filename)
+        output = create_string_buffer(output_size)
+        output_bytes = handle.OodleLZ_Decompress(c_char_p(raw_bytes), size, output, output_size, 0, 0, 0, None, None, None, None, None, None, 3)
+        return output.raw
 
 def ParseFlatbuffer(filename):
     command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\trpak.fbs -- " + filename

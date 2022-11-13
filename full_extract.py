@@ -3,7 +3,6 @@ import os
 import subprocess
 import json
 from pathlib import Path
-import sys
 from ctypes import cdll, c_char_p, create_string_buffer
 import glob
 
