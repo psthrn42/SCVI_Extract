@@ -86,32 +86,57 @@ def OodleDecompress(raw_bytes, size, output_size):
     return output.raw
 
 def ParseFlatbuffer(foldername):
-    for filename in glob.glob(os.path.join(foldername, "**/*.trpak"), recursive=True):
-        print("Parsing " + filename)
-        command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\trpak.fbs -- " + filename
-        subprocess.call(command)
-        WritePakExtractedFiles(filename)
+    extensions = ["trpak", "traef", "tracm", "tracn", "tracp", "tracr", "tranm", 
+        # Not really working
+        #"trmdl", 
+        "trmsh", "trpfd", "trpfs", "trpokecfg", "trskl", "trslp", "prmb"]
+    for extension in extensions:
+        if os.path.exists("schemas\\" + extension + ".fbs"):
+            for filename in glob.glob(os.path.join(foldername, "**/*." + extension), recursive=True):
+                print("Parsing " + filename)
+                command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\" + extension + ".fbs -- " + filename
+                subprocess.call(command)
+                WritePakExtractedFiles(filename, extension)
         
-def WritePakExtractedFiles(filename):
+def WritePakExtractedFiles(filename, extension):
     json_path = info_dir + "\\" + Path(filename).stem + ".json"
-    with open(json_path, mode="r") as parsed_file:
-        data = json.load(parsed_file)
-        for i in range(len(data["files"])):
-            out_file = open(os.path.dirname(filename) + "\\" + os.path.basename(filename.replace(".trpak", "")), mode="wb")
-            compressed_data = []
-            data_size = 0
-            for j in data["files"][i]["data"]:
-                data_size += 1
-                compressed_data.append(j)
-            if data["files"][i]["compression_type"] == "OODLE":
-                decompressed_data = OodleDecompress(bytes(compressed_data), data_size, data["files"][i]["decompressed_size"])
-            elif data["files"][i]["compression_type"] == "NONE":
-                decompressed_data = bytes(compressed_data)
-            out_file.write(decompressed_data)
-            out_file.close()
-    os.remove(filename)
-            
-ExtractFS()
-ExtractFD()
-WriteFiles()
-ParseFlatbuffer(output_dir)
+    removeOldFile = False
+    if os.path.exists(json_path):
+        with open(json_path, mode="r") as parsed_file:
+            data = json.load(parsed_file)
+            if "files" in data:
+                for i in range(len(data["files"])):
+                    newFileName = os.path.dirname(filename) + "\\" + os.path.basename(filename.replace("." + extension, ""))
+                    out_file = open(newFileName, mode="wb")
+                    compressed_data = []
+                    data_size = 0
+                    for j in data["files"][i]["data"]:
+                        data_size += 1
+                        compressed_data.append(j)
+                    if data["files"][i]["compression_type"] == "OODLE":
+                        decompressed_data = OodleDecompress(bytes(compressed_data), data_size, data["files"][i]["decompressed_size"])
+                    elif data["files"][i]["compression_type"] == "NONE":
+                        decompressed_data = bytes(compressed_data)
+                    out_file.write(decompressed_data)
+                    out_file.close()
+                    print("Wrote " + newFileName)
+                    removeOldFile = True
+            else:
+                newFileName = os.path.dirname(filename) + "\\" + os.path.basename(filename.replace("." + extension, ".json"))
+                out_file = open(newFileName, mode="w")
+                json.dump(data, out_file, indent=4)
+                out_file.close()
+                print("Wrote " + newFileName)
+        if removeOldFile:
+            os.remove(filename)
+    else:
+        print("Issue with " + json_path)
+    print()
+
+if __name__ == "__main__":
+
+    if not os.path.exists(output_dir):
+        ExtractFS()
+        ExtractFD()
+        WriteFiles()
+    ParseFlatbuffer(output_dir)

@@ -1,0 +1,12 @@
+file_extension "tracn";
+
+table ComponentEntry{
+    type:string;
+    file_name:string;
+}
+
+table AnimComponentNames{
+    components:[ComponentEntry];
+}
+
+root_type AnimComponentNames;

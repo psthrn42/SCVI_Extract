@@ -1,0 +1,36 @@
+namespace SwSh;
+
+struct HashStruct {
+    Hash:uint64;
+    unk:uint32;
+}
+
+
+table UnkTable {
+    unk0:string;
+}
+
+table Entry {
+    unk:int32;
+    unk2:int32;
+    unk3:int32;
+    unk4:int32;
+}
+
+table Entry2 {
+    unk0:byte;
+    unk1:UnkTable;
+}
+
+table Entry3 {
+    hash:HashStruct;
+    num:uint;
+}
+
+table PRMB {
+    Entries:[Entry];
+    Entries2:[Entry2];
+    Entries3:[Entry3];
+}
+
+root_type PRMB;

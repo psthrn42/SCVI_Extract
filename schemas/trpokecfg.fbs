@@ -1,0 +1,18 @@
+file_extension "trpokecfg";
+
+table PokemonConfig {
+    unk:byte;
+    unk1:float;
+    unk2:float;
+    unk3:float;
+    unk4:float;
+    unk5:float;
+    unk6:float;
+    unk7:float;
+    unk8:float;
+    unk9:float;
+    unk10:float;
+    unk11:float;
+}
+
+root_type PokemonConfig;

@@ -1,0 +1,79 @@
+file_extension "tracm";
+
+table SomeTable {
+    v1:float;
+    v2:float;
+    v3:float;
+    v4:float;
+    v5:uint;
+}
+
+table Tbl1 {
+    vec_t1:[SomeTable];
+}
+
+table Tbl2 {
+    vec_t2:[SomeTable];
+}
+
+table Tbl3 {
+    vec_t3:[SomeTable];
+}
+
+table Tbl4 {
+    vec_t4:[SomeTable];
+}
+
+table Test {
+    t1:Tbl1;
+    t2:Tbl2;
+    t3:Tbl3;
+    t4:Tbl4;
+}
+
+table SomeVec2 {
+    name:string;
+    value:Test;
+}
+
+table SomeVec1 {
+
+}
+
+table SomeData {
+    name:string;
+    unk1:[SomeVec1];
+    property:[SomeVec2];
+}
+
+table UnkTbl {
+    unk1:uint;
+    unk2:uint;
+    unk3:[SomeData];
+    unk4:uint;
+    unk5:byte;
+}
+
+table MeshShape {
+    name:string;
+    unk1:uint;
+    unk2:uint;
+    unk3:uint;
+    unk4:UnkTbl;
+    unk5:uint;
+}
+
+table Metadata {
+    unk1:uint;
+    keyframes:uint;
+    fps:uint;
+}
+
+table TracM {
+    meta:Metadata;
+    mesh_shapes:[MeshShape];
+    unk1:byte;
+    unk2:byte;
+}
+
+root_type TracM;

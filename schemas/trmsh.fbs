@@ -1,0 +1,102 @@
+file_extension "trmsh";
+
+enum Attribute : uint32 {
+    //Ordered in exefs order, might vary, need to test
+    NONE = 0,
+    POSITION,
+    NORMAL,
+    TANGENT,
+    BINORMAL,
+    COLOR,
+    TEX_COORD,
+    BLEND_MATRIX_INDEX,
+    BLEND_WEIGHTS,
+    BLEND_WEIGHTS_LAST_IMPLIED,
+    POINT_SIZE,
+    USER
+}
+
+enum Type: uint32 {
+    NONE = 0,
+    R8_G8_B8_A8_UNSIGNED_NORMALIZED = 20,
+    W8_X8_Y8_Z8_UNSIGNED = 22,
+    W16_X16_Y16_Z16_SIGNED_NORMALIZED = 39,
+    W16_X16_Y16_Z16_FLOAT = 43,
+    X32_Y32_FLOAT = 48,
+    X32_Y32_Z32_FLOAT = 51,
+    W32_X32_Y32_Z32_FLOAT = 54,
+}
+
+struct Vec4 {
+    w:float;
+    x:float;
+    y:float;
+    z:float;
+}
+
+struct Vec3 {
+    x:float;
+    y:float;
+    z:float;
+}
+
+table BoundingBox {
+    min: Vec3;
+    max: Vec3;
+}
+
+table Influence {
+    //TODO: Fuck around with this value
+    index: uint32;
+    scale: float;
+}
+
+table VertexAttribute {
+    attr_0: uint32 = 0; //Always 0
+    attribute: Attribute = 0;
+    attribute_layer: uint32 = 0; //Chooses which Color or UV layer to use
+    type: Type;
+    position: uint32 = 0;
+}
+
+table VertexSize {
+    size: uint32;
+}
+
+table VertexAttributes {
+    attrs: [VertexAttribute];
+    size: [VertexSize];
+}
+
+table Shape {
+    poly_count: uint32; //Always off by two
+    poly_offset: uint32;
+    sh_unk3: uint32;
+    shape_name: string;
+    sh_unk4: uint32;
+}
+
+table MeshShape {
+    mesh_shape_name: string;
+    bounds: BoundingBox;
+    sort_priority: uint32 = 0; //Always 1?
+    attributes: [VertexAttributes];
+    shape: [Shape];
+    //Always zero for these four
+    res0: uint32 = 0;
+    res1: uint32 = 0;
+    res2: uint32 = 0;
+    res3: uint32 = 0;
+    mesh_vec: Vec4;
+    influence: [Influence];
+    mesh_unk7: [uint32]; // Always empty
+    mesh_name: string;
+}
+
+table Mesh {
+    unk0: uint32;
+    meshes:[MeshShape];
+    buffer_name:string;
+}
+
+root_type Mesh;

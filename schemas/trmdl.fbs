@@ -1,0 +1,48 @@
+file_extension "trmdl";
+
+struct Vec4f {
+	x:float;
+	y:float;
+	z:float;
+	w:float;
+}
+
+struct Vec3f {
+	x:float;
+	y:float;
+	z:float;
+}
+
+table UnkTbl {
+	vec1:Vec3f;
+	vec2:Vec3f;
+}
+
+table LODIndex {
+	unk1:uint;
+}
+
+table LOD {
+	index:[LODIndex];
+	lod_type:string;
+}
+
+table Skel {
+	file:string;
+}
+
+table Mesh {
+	file:string;
+}
+
+table Model {
+	unk1:uint;
+	meshes:[Mesh];
+	skeleton:Skel;
+	materials:[string];
+	lods:[LOD];
+	unk2:UnkTbl;
+	vec:Vec4f;
+}
+
+root_type Model;

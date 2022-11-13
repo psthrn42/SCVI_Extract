@@ -1,6 +1,10 @@
 # SCVI Extract
 Python scripts to extract data formats from the pokemon games 'Scarlet' and 'Violet'
 
+Fork from https://github.com/psthrn42/SCVI_Extract
+
+Got some schemas from https://github.com/Reisyukaku/PkmnFbs
+
 ## How to use
 1. Create the folders 'files' and 'tools' in the root directory of the repo.
 2. Place the files 'flatc.exe' and 'oo2core_6_win64.dll' in the 'tools' folder.

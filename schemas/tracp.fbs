@@ -1,0 +1,36 @@
+file_extension "tracp";
+
+table IntEntry {
+    name:string;
+    val1:int;
+    val2:int;
+    val3:int;
+}
+
+table FloatEntry {
+    name:string;
+    val1:float;
+    val2:float;
+}
+
+table BoolEntry {
+    name:string;
+    val:bool;
+}
+
+table TriggerEntry {
+    name:string;
+}
+
+table ParameterTbl {
+    ints:[IntEntry];
+    floats:[FloatEntry];
+    bools:[BoolEntry];
+    triggers:[TriggerEntry];
+}
+
+table AnimParameters {
+    parameters:ParameterTbl;
+}
+
+root_type AnimParameters;

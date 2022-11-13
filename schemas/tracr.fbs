@@ -1,0 +1,49 @@
+file_extension "tracr";
+
+table GroupConfig {
+	class:string;
+	unk2:uint;
+}
+
+table ActionRef {
+	action_name:string;
+}
+
+table ActionGroupMember {
+	action:ActionRef;
+	speed:float;
+}
+
+table FileRef {
+	file_name:string;
+}
+
+table ResourceMap {
+	motion:FileRef;
+	collision:FileRef;
+	effect:FileRef;
+}
+
+table ActionGroup {
+	name:string;
+	config:GroupConfig;
+	members:[ActionGroupMember];
+}
+
+table Action {
+	name:string;
+	unk1:uint;
+	unk2:uint;
+	resources:ResourceMap;
+}
+
+table AnimResourceEntries {
+	actions:[Action];
+	groups:[ActionGroup];
+}
+
+table AnimResources {
+	entries:AnimResourceEntries;
+}
+
+root_type AnimResources;

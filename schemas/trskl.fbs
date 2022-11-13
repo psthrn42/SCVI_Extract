@@ -1,0 +1,62 @@
+file_extension "trskl";
+
+struct Vec3f {
+    x:float;
+    y:float;
+    z:float;
+}
+
+struct Vec4f {
+    x:float;
+    y:float;
+    z:float;
+    w:float;
+}
+
+table UnkTbl {
+	unk1:Vec3f;
+	unk2:Vec3f;
+	unk3:Vec3f;
+	unk4:Vec3f;
+}
+
+table Unk1 {
+	unk1:ubyte;
+	unk2:ubyte;
+	unk3:UnkTbl;
+}
+
+table Unk2 {
+    roll_bone_name:string;
+	ex_bone_name:string;
+	main_bone_name:string;
+	modifier_type:string;
+	unk1:uint;
+	unk2:Vec3f;
+	unk3:Vec4f;
+}
+
+table TransformTbl {
+    vec1:Vec3f;
+    vec2:Vec3f;
+    vec3:Vec3f;
+}
+
+table Effect {
+    name:string;
+    transform:TransformTbl;
+    unk2:Vec3f;
+    unk3:Vec3f;
+    unk4:uint;
+    unk5:uint;
+    parent_bone:string;
+}
+
+table SkeletalLocator {
+    unk:uint;
+    effects:[Effect];
+    unk1:[Unk1];
+    unk2:[Unk2];
+}
+
+root_type SkeletalLocator;

@@ -1,0 +1,69 @@
+file_extension "tranm";
+
+enum VectorTrack : byte {
+    none = 0,
+    fixed_vector_track = 1,
+    dynamic_vector_track = 2,
+    framed_vector_track = 3,
+    unk_vector_track = 4,
+}
+
+enum QuatTrack : byte {
+    none = 0,
+    fixed_quat_track = 1,
+    dynamic_quat_track = 2,
+    framed_quat_track = 3,
+    unk_quat_track = 4,
+}
+
+struct Vec4i {
+    x:ushort;
+    y:ushort;
+    z:ushort;
+    w:ushort;
+}
+
+struct Vec3f {
+    x:float;
+    y:float;
+    z:float;
+}
+
+table ScaleV3 {
+    vec3:Vec3f;
+}
+
+table RotV3 {
+    vec3:Vec4i;
+}
+
+table TransV3 {
+    vec3:Vec3f;
+}
+
+table Bone {
+    name:string;
+    scale_type:VectorTrack;
+    scale:ScaleV3;
+    rot_type:QuatTrack;
+    rotation:RotV3;
+    trans_type:VectorTrack;
+    translation:TransV3;
+}
+
+table SkelAnim {
+    bones:[Bone];
+}
+
+table Metadata {
+    unk1:uint;
+    keyframes:uint;
+    fps:uint;
+}
+
+table TranM {
+    meta:Metadata;
+    anim:SkelAnim;
+}
+
+root_type TranM;
