@@ -18,11 +18,14 @@ name_dict = {}
 hash_dict = {}
 
 def FNV1a64(input_str):
+    if input_str in hash_dict:
+        return hash_dict[input_str]
     fnv_prime = 1099511628211
     offset_basis = 14695981039346656837
     for i in input_str:
         offset_basis ^= ord(i)
         offset_basis = (offset_basis * fnv_prime) % (2**64)
+    hash_dict[input_str] = offset_basis
     return offset_basis
 
 def ExtractFS():
@@ -50,7 +53,6 @@ def ExtractFD():
         cnames = cnames_file.read().splitlines() 
         for i in range(len(onames)):
             name_dict[onames[i]] = cnames[i]
-            hash_dict[onames[i]] = FNV1a64(onames[i])
 
 def WriteFiles():
     print("Extracting files...")
@@ -68,8 +70,12 @@ def WriteFiles():
 
             path = "ERROR_NO_MATCHING_FILENAME"
             for j in fd["paths"]:
-                if name_hash == hash_dict[j]:
-                    path = output_dir + "/" + name_dict[j]
+                if name_hash == FNV1a64(j):
+                    if j in name_dict:
+                        path = output_dir + "/" + name_dict[j]
+                    else:
+                        path = output_dir + "/" + j
+                    break
             print(path)
             os.makedirs(os.path.dirname(path), exist_ok=True)
 
