@@ -3,7 +3,7 @@ Python scripts to extract data formats from the pokemon games 'Scarlet' and 'Vio
 
 ## How to use
 1. Create the folders 'files' and 'tools' in the root directory of the repo.
-2. Place the files 'flatc.exe' and 'oo2core_6_win64.dll' in the 'tools' folder.
+2. Place the files 'flatc.exe' and 'oo2core_6_win64.dll' (newer should work as well) in the 'tools' folder.
 3. Place the files 'data.trpfs' and 'data.trpfd' (from the romfs) into the 'files' folder.
 
 ### TRPFS Extraction
