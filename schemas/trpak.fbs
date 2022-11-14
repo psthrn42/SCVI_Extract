@@ -9,7 +9,7 @@ table File {
 	unused: uint8;
 	compression_type: Compression = 255;
 	unk1: uint8;
-	decompressed_size: uint32;
+	decompressed_size: uint64;
 	data: [uint8];
 }
 
