@@ -1,10 +1,12 @@
 import struct
 import os
 import subprocess
+import platform
 import json
 from pathlib import Path
 from ctypes import cdll, c_char_p, create_string_buffer
 import glob
+import sys
 
 fs_magic = "ONEPACK"
 file_dir = "files"
@@ -15,6 +17,22 @@ output_dir = "output"
 init_offset = 0
 name_dict = {}
 hash_dict = {}
+
+def GetPathSeparator():
+    if platform.system() == "Linux":
+        return "/"
+    return "\\"
+
+def GetFlatcName():
+    if platform.system() == "Linux":
+        return "flatc"
+    return "flatc.exe"
+
+def GetOodleLibName(version):
+    if platform.system() == "Linux":
+        return "liblinoodle.so"
+    names = ["oo2core_6_win64.dll", "oo2core_7_win64.dll", "oo2core_8_win64.dll"]
+    return names[version]
 
 def FNV1a64(input_str):
     if input_str in hash_dict:
@@ -29,7 +47,7 @@ def FNV1a64(input_str):
 
 def ExtractFS():
     print("Extracting data from trpfs file...")
-    with open(file_dir + "\data.trpfs", mode="rb") as fs, open(file_dir + "\\fs_data_separated.trpfs", mode="wb") as fs_sep:
+    with open(file_dir + GetPathSeparator() + "data.trpfs", mode="rb") as fs, open(file_dir + GetPathSeparator() + "fs_data_separated.trpfs", mode="wb") as fs_sep:
         magic = fs.read(8).decode("utf-8") [:-1]
         assert (magic == fs_magic), "Invalid trpfs magic!"
         global init_offset
@@ -39,15 +57,15 @@ def ExtractFS():
         fs.seek(init_offset)
         fs_sep.write(fs.read(eof_offset - init_offset))
 
-    command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\trpfs.fbs -- files\\fs_data_separated.trpfs"
+    command = [tool_dir + GetPathSeparator() + GetFlatcName(), "--raw-binary", "-o", "info", "--strict-json", "--defaults-json", "-t", "schemas" + GetPathSeparator() + "trpfs.fbs", "--", "files" + GetPathSeparator() + "fs_data_separated.trpfs"]
     subprocess.call(command)
 
 def ExtractFD():
     print("Extracting data from trpfd file...")
-    command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\trpfd.fbs -- files\\data.trpfd"
+    command = [tool_dir + GetPathSeparator() + GetFlatcName(), "--raw-binary", "-o", "info", "--strict-json", "--defaults-json", "-t", "schemas" + GetPathSeparator() + "trpfd.fbs", "--", "files" + GetPathSeparator() + "data.trpfd"]
     subprocess.call(command)
     
-    with open(info_dir + "\\names_original.txt", mode="r") as onames_file, open(info_dir + "\\names_changed.txt", mode="r") as cnames_file:
+    with open(info_dir + GetPathSeparator() + "names_original.txt", mode="r") as onames_file, open(info_dir + GetPathSeparator() + "names_changed.txt", mode="r") as cnames_file:
         onames = onames_file.read().splitlines() 
         cnames = cnames_file.read().splitlines() 
         for i in range(len(onames)):
@@ -55,7 +73,7 @@ def ExtractFD():
 
 def WriteFiles():
     print("Extracting files...")
-    with open(info_dir + "\data.json", mode="r") as fd_info, open(info_dir + "\\fs_data_separated.json", mode="r") as fs_info, open(file_dir + "\data.trpfs", mode="rb") as data:
+    with open(info_dir + GetPathSeparator() + "data.json", mode="r") as fd_info, open(info_dir + GetPathSeparator() + "fs_data_separated.json", mode="r") as fs_info, open(file_dir + GetPathSeparator() + "data.trpfs", mode="rb") as data:
         fd = json.load(fd_info)
         fs = json.load(fs_info)
         num_files = len(fs["file_offsets"])
@@ -85,29 +103,37 @@ def WriteFiles():
     print("\nExtraction complete!")
 
 def OodleDecompress(raw_bytes, size, output_size):
-    for filename in glob.glob(os.path.join(tool_dir, "oo2core*.dll")):
-        handle = cdll.LoadLibrary(filename)
-        output = create_string_buffer(output_size)
-        output_bytes = handle.OodleLZ_Decompress(c_char_p(raw_bytes), size, output, output_size, 0, 0, 0, None, None, None, None, None, None, 3)
-        return output.raw
+    filename = Path("")
+    for i in range(3):
+        filename = Path(tool_dir + GetPathSeparator() + GetOodleLibName(i))
+        if filename.exists():
+            break
+    if not filename.exists():
+        sys.exit("\noodle decompress library not found!")
+    os.chdir(tool_dir)
+    handle = cdll.LoadLibrary("." + GetPathSeparator() + str(filename.name))
+    output = create_string_buffer(output_size)
+    output_bytes = handle.OodleLZ_Decompress(c_char_p(raw_bytes), size, output, output_size, 0, 0, 0, None, None, None, None, None, None, 3)
+    os.chdir("..")
+    return output.raw
 
 def ParseFlatbuffer(foldername):    
     for filename in glob.glob(os.path.join(foldername, "**/*.trpak"), recursive=True):
         print("Parsing " + filename)
-        command = tool_dir + "\\flatc.exe --raw-binary -o info --strict-json --defaults-json -t schemas\\trpak.fbs -- " + filename
+        command = [tool_dir + GetPathSeparator() + GetFlatcName(), "--raw-binary", "-o", "info", "--strict-json", "--defaults-json", "-t", "schemas" + GetPathSeparator() + "trpak.fbs", "--", filename]
         subprocess.call(command)
 
-        folderName = os.path.dirname(filename) + "\\" + os.path.basename(filename.replace(".trpak", ""))
+        folderName = os.path.dirname(filename) + GetPathSeparator() + os.path.basename(filename.replace(".trpak", ""))
 
         if not os.path.exists(folderName):
             os.mkdir(folderName)
 
-        json_path = info_dir + "\\" + Path(filename).stem + ".json"
+        json_path = info_dir + GetPathSeparator() + Path(filename).stem + ".json"
         with open(json_path, mode="r") as parsed_file:
             data = json.load(parsed_file)
             for i in range(len(data["files"])):
                 hashValue = data["hashes"][i]
-                out_file = open(folderName + "\\" + hex(hashValue), mode="wb")
+                out_file = open(folderName + GetPathSeparator() + hex(hashValue), mode="wb")
                 compressed_data = []
                 data_size = 0
                 for j in data["files"][i]["data"]:

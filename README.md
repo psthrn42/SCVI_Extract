@@ -1,9 +1,14 @@
 # SCVI Extract
 Python scripts to extract data formats from the pokemon games 'Scarlet' and 'Violet'
 
-## How to use
+## How to use (Windows)
 1. Create the folders 'files' and 'tools' in the root directory of the repo.
 2. Place the files 'flatc.exe' and 'oo2core_6_win64.dll' (newer should work as well) in the 'tools' folder.
+3. Place the files 'data.trpfs' and 'data.trpfd' (from the romfs) into the 'files' folder.
+
+## How to use (Linux, tested on Ubuntu Kinetic Kudu)
+1. Create the folders 'files' and 'tools' in the root directory of the repo.
+2. Place the files 'flatc', 'liblinoodle.so' and 'oo2core_8_win64.dll' (has to be this version AFAIK, same .dll as on Windows) in the 'tools' folder.
 3. Place the files 'data.trpfs' and 'data.trpfd' (from the romfs) into the 'files' folder.
 
 ### TRPFS Extraction
